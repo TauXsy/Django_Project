@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>老师界面</title>
+</head>
+<body>
+    <div class="teacher">
+        <form class="add_tea">
+            {% csrf_token %}
+            <label>老师工号：</label>
+            <input type="text" name = "teacher_num">
+            <label>老师姓名：</label>
+            <input type="text" name = "teacher_name">
+            <label>老师年龄：</label>
+            <input type="text" name = "teacher_age">
+            <button type="submit" class="tea_info">添加老师信息</button>
+            <button class="select_cour">选课</button>
+
+        </form>
+        <div class="courses">
+            <span class="txt">课程名称</span>
+
+        </div>
+        <input type="submit" value="绑定">
+    </div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+    var url = location.search;
+    var url_content = url.split("=");
+    // alert(url_content[2],typeof(url_content));
+    var user_id = "user_id="+url_content[1].split("&")[0];
+
+    $(".tea_info").on("click",function () {
+//          组止默认链接
+            event.preventDefault();
+//            序列化数据 ,获取所有表单中需要提交的数据
+            paras = $("form[class='add_tea']").serialize();
+
+            paras = paras+"&user_id="+url_content[1].split("&")[0]
+
+            $.ajax({
+//               路径
+                url:"{% url 'regist_teacher_info' %}",
+//                类型
+                type:"post",
+//                数据
+                data:paras,
+//                操作成功
+                dataType:'json',
+                success:function (res) {
+//                    调用函数,res转成对象
+//                    res  = JSON.parse(res);
+                   if(res.code == 200){
+//                        注册成功，页面跳转，
+                    alert('nb')
+//
+                    }else {
+//                      报错信息
+//                        console.log(res.teacher_num)
+//                        $('input[name="teacher_num"]').val(res.teacher_num);
+                       // alert('sb');
+                    }
+                }
+            })
+        })
+    
+    //选课
+    $(".select_cour").on("click",function () {
+        event.preventDefault();
+
+        $.ajax({
+            url:"{% url 'get_course' %}",
+            type:'get',
+            data:'',
+            dataType:'json',
+            success:function (res) {
+                for(var i = 0; i < res.length; i++){
+                    var mark = $(` <span>
+            <input type="radio"  name="c_id" value="${res[i].course_id}">${res[i].course_name}
+        </span>`);
+                    $('.courses').append(mark);
+                }
+            }
+        });
+    })
+
+    //邦课
+    $("input[type='submit']").on("click",function () {
+        event.preventDefault();
+        var c_id_data = $("input[name='c_id']").attr("value");
+        console.log(c_id_data);
+        var paras = user_id + "&c_id_data=" +c_id_data
+        $.ajax({
+//               路径
+                url:"{% url 'update_tea_course' %}",
+//                类型
+                type:"post",
+//                数据
+                data:paras,
+//                操作成功
+                dataType:'json',
+                success:function (res) {
+//                    调用函数,res转成对象
+//                    res  = JSON.parse(res);
+                   if(res.code == 200){
+//                        注册成功，页面跳转，
+                    alert('nb')
+//
+                    }else {
+//                      报错信息
+                       alert('sb');
+                    }
+                }
+            })
+    })
+</script>

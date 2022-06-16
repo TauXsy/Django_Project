@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <form method="get">
+        {% csrf_token %}
+        <label>用户名：</label>
+        <input type="text" name="username">
+        <label>密码：</label>
+        <input type="password" name="password">
+        <button type="submit" >登录</button>
+        <a type="button" href="{% url 'page' 'regist.html' %}" >注册</a>
+        <a type="button" href="{% url 'page' 'UpdateUserPassword.html' %}" >忘记密码</a>
+    </form>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+    $("button[type='submit']").on("click",function () {
+        event.preventDefault();
+       paras = $("form").serialize();
+        $.ajax({
+            url:"{% url 'check_userinfo' %}",
+            type:"get",
+            data:paras,
+            success:function (res) {
+               res =  JSON.parse(res);
+               console.log(res);
+                if (res.code == 200){
+//                   账号和密码验证成功，登录首页
+                    if (res.msg.user_kind == "管理员"){
+                        window.location.href="{% url 'page' 'gly_page.html' %}?id="+res.msg.id+"&username="+res.msg.username;
+                    }else if(res.msg.user_kind == "老师"){
+                        window.location.href="{% url 'page' 'teacher_page.html' %}?id="+res.msg.id+"&username="+res.msg.username;
+                    }else {
+                        window.location.href="{% url 'page' 'index.html' %}?id="+res.msg.id+"&username="+res.msg.username;
+                    }
+
+
+                }else {
+//                    验证不成功，报错信息
+                    alert('sb');
+                }
+            }
+        })
+    })
+</script>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员界面</title>
+</head>
+<body>
+        <div class="course">
+        <form>
+<!--            <label>课程编号：</label>-->
+<!--            <input type="text" name = "course_num">-->
+            <label>课程名称：</label>
+            <input type="text" class="course_name" name = "course_name">
+            <button type="submit" class="cour_info">添加课程信息</button>
+
+        </form>
+    </div>
+</body>
+</html>
+<script>
+    $(".cour_info").on("click",function () {
+        event.preventDefault();
+        datas = $(".course_name").serialize()
+        $.ajax({
+//               路径
+                url:"{% url 'regist_course_info' %}",
+//                类型
+                type:"post",
+//                数据
+                data:datas,
+//                操作成功
+                dataType:'json',
+                success:function (res) {
+//                    调用函数,res转成对象
+//                    res  = JSON.parse(res);
+                   if(res.code == 200){
+//                        注册成功，页面跳转，
+                    alert('nb')
+//
+                    }else {
+//                      报错信息
+                       alert('sb');
+                    }
+                }
+            })
+    })
+</script>
